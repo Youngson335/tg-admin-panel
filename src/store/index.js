@@ -2,97 +2,69 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
-    api: [
-      {
-        id: 1,
-        title: "Captains Bay API endpoint",
-        link: "https://bot.captainsbay.xyz",
-        userInfo: {
-          totalUsers: "1 100 050",
-          mauUsers: "800 050",
-          dauUsers: "100 050",
-        },
-        tasks: [
-          {
-            id: 1,
-            title: "Subscribe to Code Hawk",
-            reward: "500 000",
-            date: "10.10",
-          },
-          {
-            id: 2,
-            title: "Join in Official Chat",
-            reward: "1 000 000",
-            date: "10.10",
-          },
-          {
-            id: 3,
-            title: "Subscribe to Code Hawk",
-            reward: "500 000",
-            date: "10.10",
-          },
-          {
-            id: 4,
-            title: "Join in Official Chat",
-            reward: "1 000 000",
-            date: "10.10",
-          },
-          {
-            id: 5,
-            title: "Subscribe to Code Hawk",
-            reward: "500 000",
-            date: "10.10",
-          },
-          {
-            id: 6,
-            title: "Join in Official Chat",
-            reward: "1 000 000",
-            date: "10.10",
-          },
-        ],
-        lists: [
-          {
-            id: 1,
-            image: null,
-            message: "Heello user! Please, click to /start now",
-          },
-          {
-            id: 2,
-            image: null,
-            message: "Heello user! Please, click to /start now",
-          },
-          {
-            id: 3,
-            image: null,
-            message: "Heello user! Please, click to /start now",
-          },
-          {
-            id: 4,
-            image: null,
-            message: "Heello user! Please, click to /start now",
-          },
-          {
-            id: 5,
-            image: null,
-            message: "Heello user! Please, click to /start now",
-          },
-        ],
-      },
-    ],
+    api: [],
+    newApi: false,
+    selectedApi: null,
   },
   mutations: {
     addApiEndpoint(state, newApi) {
       state.api.push(newApi);
     },
+    updateApiEndpoint(state, { id, updatedApi }) {
+      const index = state.api.findIndex((api) => api.id === id);
+      if (index !== -1) {
+        state.api[index] = { ...state.api[index], ...updatedApi };
+      }
+    },
+    deleteApiEndpoint(state, id) {
+      state.api = state.api.filter((api) => api.id !== id);
+    },
+    createNewApi(state, flag) {
+      state.newApi = flag;
+    },
+    writeSelectApi(state, id) {
+      state.selectedApi = id;
+    },
+    setApi(state, api) {
+      state.api = api;
+    },
   },
   actions: {
     saveApiEndpoint({ commit }, newApi) {
       commit("addApiEndpoint", newApi);
+      localStorage.setItem("apiEndpoints", JSON.stringify(this.state.api));
+    },
+    updateApiEndpoint({ commit }, { id, updatedApi }) {
+      commit("updateApiEndpoint", { id, updatedApi });
+      localStorage.setItem("apiEndpoints", JSON.stringify(this.state.api));
+    },
+    deleteApiEndpoint({ commit }, id) {
+      commit("deleteApiEndpoint", id);
+      localStorage.setItem("apiEndpoints", JSON.stringify(this.state.api));
+    },
+    addNewApi({ commit }, flag) {
+      commit("createNewApi", flag);
+    },
+    updateSelectedApi({ commit }, id) {
+      commit("writeSelectApi", id);
+    },
+    loadApiFromLocalStorage({ commit }) {
+      const apiFromLocalStorage = localStorage.getItem("apiEndpoints");
+      if (apiFromLocalStorage) {
+        const parsedApi = JSON.parse(apiFromLocalStorage);
+        commit("setApi", parsedApi);
+      }
     },
   },
   getters: {
     getApi(state) {
       return state.api;
+    },
+    getNewApi(state) {
+      return state.newApi;
+    },
+    getSelectedApi(state) {
+      return state.selectedApi;
     },
   },
   modules: {},

@@ -1,4 +1,6 @@
 <template>
+  <Header @addApi="createEndpoint" @selectApi="selectApi" />
+
   <router-view />
 
   <div class="menu">
@@ -9,6 +11,19 @@
 <script setup>
 import { onMounted } from "vue";
 import Menu from "./components/Menu/Menu.vue";
+import Header from "./components/Header/Header.vue";
+import { useStore } from "vuex";
+
+const store = useStore();
+
+const createEndpoint = () => {
+  store.dispatch("addNewApi", true);
+};
+
+const selectApi = (id) => {
+  store.dispatch("updateSelectedApi", id);
+  console.log(id);
+};
 
 //применение стилей к браузеру
 const body = document.getElementsByTagName("body")[0];
@@ -37,7 +52,7 @@ onMounted(() => {
 }
 
 .menu {
-  position: absolute;
+  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;

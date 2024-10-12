@@ -5,8 +5,9 @@
     {{ apiName }}
   </div>
 </template>
+
 <script setup>
-import { defineProps } from "vue";
+import { defineProps, ref, watch } from "vue";
 
 const props = defineProps({
   api: {
@@ -14,15 +15,21 @@ const props = defineProps({
   },
 });
 
-const words = props.api.title.split(" ");
+const apiName = ref("");
 
-const apiName = words
-  .slice(0, 2)
-  .map((word) => word.slice(0, 1))
-  .join("");
-
-console.log(apiName);
+watch(
+  () => props.api.name,
+  (newTitle) => {
+    if (newTitle) {
+      const words = newTitle.split(" ");
+      apiName.value = words
+        .slice(0, 2)
+        .map((word) => word.slice(0, 1))
+        .join("");
+    } else {
+      apiName.value = "";
+    }
+  },
+  { immediate: true }
+);
 </script>
-<style lang="">
-/* border: 2px solid #FF5722 */
-</style>

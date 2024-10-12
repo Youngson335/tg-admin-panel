@@ -19,7 +19,7 @@
 <script setup>
 import AddApiBtn from "../Buttons/AddApiBtn.vue";
 import EndpointName from "../Endpoint/EndpointName.vue";
-import { ref, computed, defineEmits } from "vue";
+import { ref, computed, defineEmits, onMounted } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
@@ -34,7 +34,12 @@ const createEndpoint = () => {
 const selectEndpoint = (id) => {
   activeApiId.value = id;
   emit("selectApi", id);
+  store.dispatch("addNewApi", false);
 };
+
+onMounted(() => {
+  store.dispatch("loadApiFromLocalStorage");
+});
 
 const getApiNames = computed(() => store.getters["getApi"]);
 </script>
