@@ -15,11 +15,15 @@
 
 <script setup>
 import { defineEmits } from "vue";
+import { useStore } from "vuex";
+
+const store = useStore();
 
 const emit = defineEmits(["addApi"]);
 
 const addEndpoint = () => {
-  emit("addApi"); // Эмит события addApi
+  emit("addApi");
+  store.dispatch("updateSelectedApi", null);
 };
 </script>
 

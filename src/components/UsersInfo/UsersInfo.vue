@@ -14,7 +14,7 @@
     </div>
 
     <div class="users-block flex justify-between items-center">
-      <div class="users-mau">
+      <div class="users-mau w-[49%]">
         <div class="users-mau__info p-4 bg-dark-gray rounded-[20px]">
           <h3
             class="text-xs font-medium leading-[14.52px] text-center text-[#FFFFFF80]"
@@ -26,7 +26,7 @@
           </strong>
         </div>
       </div>
-      <div class="users-dau">
+      <div class="users-dau w-[49%]">
         <div class="users-dau__info p-4 bg-dark-gray rounded-[20px]">
           <h3
             class="text-xs font-medium leading-[14.52px] text-center text-[#FFFFFF80]"
