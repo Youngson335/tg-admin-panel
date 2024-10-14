@@ -17,6 +17,7 @@ import { useStore } from "vuex";
 const store = useStore();
 
 const createEndpoint = () => {
+  store.dispatch("updateSelectedApi", null);
   store.dispatch("addNewApi", true);
 };
 

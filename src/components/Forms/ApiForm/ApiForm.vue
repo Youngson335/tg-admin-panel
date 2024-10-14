@@ -48,25 +48,33 @@ const deleteEndpoint = () => {
 };
 
 const saveEndpoint = () => {
-  const newApi = {
-    id: getAllApi.value.length + 1,
-    name: nameEndpoint.value,
-    link: linkEndpoint.value,
-    key: keyEndpoint.value,
-    userInfo: {
-      totalUsers: "0",
-      mauUsers: "0",
-      dauUsers: "0",
-    },
-    tasks: [],
-    lists: [],
-  };
+  if (
+    linkEndpoint.value !== "" &&
+    nameEndpoint.value !== "" &&
+    keyEndpoint.value !== ""
+  ) {
+    const newApi = {
+      id: getAllApi.value.length + 1,
+      name: nameEndpoint.value,
+      link: linkEndpoint.value,
+      key: keyEndpoint.value,
+      userInfo: {
+        totalUsers: "0",
+        mauUsers: "0",
+        dauUsers: "0",
+      },
+      tasks: [],
+      lists: [],
+    };
 
-  store.dispatch("saveApiEndpoint", newApi);
+    store.dispatch("saveApiEndpoint", newApi);
 
-  linkEndpoint.value = "";
-  nameEndpoint.value = "";
-  keyEndpoint.value = "";
+    linkEndpoint.value = "";
+    nameEndpoint.value = "";
+    keyEndpoint.value = "";
+  } else {
+    return false;
+  }
 };
 onMounted(() => {
   store.dispatch("loadApiFromLocalStorage");

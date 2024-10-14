@@ -10,9 +10,7 @@
 
     <div v-if="activeEndpointId !== null">
       <div class="flex justify-between items center mb-[20px]">
-        <p class="text-[1.5rem] font-bold text-left text-[#FFFFFF80] uppercase">
-          Basic metrics
-        </p>
+        <MainTItle :text="'Basic metrics'" />
         <RefreshBtn />
       </div>
       <UsersInfo :activeUserInfo="activeEndpoint.userInfo" />
@@ -22,11 +20,12 @@
 </template>
 
 <script setup>
-import ApiForm from "@/components/Forms/ApiForm.vue";
+import ApiForm from "@/components/Forms/ApiForm/ApiForm.vue";
 import EndpointsBlock from "@/components/Endpoint/EndpointsBlock.vue";
 import UsersInfo from "@/components/UsersInfo/UsersInfo.vue";
 import RefreshBtn from "@/components/Buttons/RefreshBtn.vue";
-import EditApiForm from "@/components/Forms/EditApiForm.vue";
+import EditApiForm from "@/components/Forms/ApiForm/EditApiForm.vue";
+import MainTItle from "@/components/Titles/MainTItle.vue";
 import { ref, computed, watch } from "vue";
 import { useStore } from "vuex";
 
@@ -51,6 +50,9 @@ const closeForm = () => {
 watch(selectedApi, (newValue) => {
   if (newValue) {
     selectApi(newValue);
+  }
+  if (newValue === null) {
+    activeEndpointId.value = null;
   }
 });
 </script>

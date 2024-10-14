@@ -80,26 +80,22 @@
   </nav>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      activeMenu: 2,
-    };
-  },
-  mounted() {
-    const savedActiveMenu = localStorage.getItem("activeMenu");
-    if (savedActiveMenu) {
-      this.activeMenu = parseInt(savedActiveMenu);
-    }
-  },
-  methods: {
-    setActive(id) {
-      this.activeMenu = id;
-      localStorage.setItem("activeMenu", id);
-    },
-  },
+<script setup>
+import { ref, onMounted } from "vue";
+
+let activeMenu = ref(2);
+
+const setActive = (id) => {
+  activeMenu.value = id;
+  localStorage.setItem("activeMenu", id);
 };
+
+onMounted(() => {
+  const savedActiveMenu = localStorage.getItem("activeMenu");
+  if (savedActiveMenu) {
+    activeMenu.value = parseInt(savedActiveMenu);
+  }
+});
 </script>
 
 <style lang="scss">

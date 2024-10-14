@@ -25,9 +25,10 @@ import { useStore } from "vuex";
 const store = useStore();
 const emit = defineEmits(["addApi", "selectApi"]);
 
-let activeApiId = ref(null);
+let activeApiId = computed(() => store.getters["getSelectedApi"]);
 
 const createEndpoint = () => {
+  activeApiId.value = null;
   emit("addApi");
 };
 
