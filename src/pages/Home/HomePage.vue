@@ -60,7 +60,9 @@ watch(selectedApi, (newValue) => {
   }
 });
 onMounted(() => {
-  selectApi(activeApi.value.id);
+  if (activeApi.value) {
+    selectApi(activeApi.value.id);
+  }
 });
 </script>
 
