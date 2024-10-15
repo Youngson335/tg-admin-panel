@@ -5,8 +5,9 @@
       <BtnUrlInput v-model="url" />
     </div>
     <RemoveBtn @removeForm="removeForm" class="mb-[10px]" />
-    <SaveNewBtn @click="saveForm" />
+    <SaveNewBtn v-if="text !== '' && url !== ''" @click="saveForm" />
   </div>
+  <Notification :notification="notificationState" v-if="notificationVisible" />
 </template>
 
 <script setup>
@@ -15,6 +16,11 @@ import BtnUrlInput from "./Inputs/BtnUrlInput.vue";
 import BtnTextInput from "./Inputs/BtnTextInput.vue";
 import RemoveBtn from "./Btns/RemoveBtn.vue";
 import SaveNewBtn from "./Btns/SaveNewBtn.vue";
+import Notification from "@/components/Notification/Notification.vue";
+import { useNotification } from "@/composables/Notification";
+
+const { notificationState, notificationVisible, showNotification } =
+  useNotification();
 
 const props = defineProps({
   id: Number,
@@ -29,12 +35,13 @@ const removeForm = () => {
   emit("removeForm", props.id);
 };
 
-// Сохранение данных формы
 const saveForm = () => {
   const formData = {
+    id: props.id,
     text: text.value,
     url: url.value,
   };
   emit("saveForm", formData);
+  showNotification("success", "Added new buttons");
 };
 </script>

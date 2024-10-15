@@ -4,17 +4,19 @@
       <ApiForm />
     </div>
 
-    <div v-if="activeEndpointId !== null">
-      <EditApiForm :activeEndpoint="activeEndpoint" @closeForm="closeForm" />
-    </div>
-
-    <div v-if="activeEndpointId !== null">
-      <div class="flex justify-between items center mb-[20px]">
-        <MainTItle :text="'Basic metrics'" />
-        <RefreshBtn />
+    <div v-if="newApi !== true">
+      <div v-if="activeEndpointId !== null">
+        <EditApiForm :activeEndpoint="activeEndpoint" @closeForm="closeForm" />
       </div>
-      <UsersInfo :activeUserInfo="activeEndpoint.userInfo" />
-      <EndpointsBlock :activeEndpoint="activeEndpoint" />
+
+      <div v-if="activeEndpointId !== null">
+        <div class="flex justify-between items center mb-[20px]">
+          <MainTItle :text="'Basic metrics'" />
+          <RefreshBtn />
+        </div>
+        <UsersInfo :activeUserInfo="activeEndpoint.userInfo" />
+        <EndpointsBlock :activeEndpoint="activeEndpoint" />
+      </div>
     </div>
   </main>
 </template>
@@ -26,7 +28,7 @@ import UsersInfo from "@/components/UsersInfo/UsersInfo.vue";
 import RefreshBtn from "@/components/Buttons/RefreshBtn.vue";
 import EditApiForm from "@/components/Forms/ApiForm/EditApiForm.vue";
 import MainTItle from "@/components/Titles/MainTItle.vue";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
@@ -37,6 +39,8 @@ const selectedApi = computed(() => store.getters["getSelectedApi"]);
 
 let activeEndpointId = ref(null);
 let activeEndpoint = ref(null);
+
+let activeApi = computed(() => store.getters["getActiveApi"]);
 
 const selectApi = (id) => {
   activeEndpoint.value = getAPI.value.find((api) => api.id === id);
@@ -54,6 +58,9 @@ watch(selectedApi, (newValue) => {
   if (newValue === null) {
     activeEndpointId.value = null;
   }
+});
+onMounted(() => {
+  selectApi(activeApi.value.id);
 });
 </script>
 

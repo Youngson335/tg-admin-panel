@@ -1,6 +1,6 @@
 <template>
   <nav
-    class="flex items-center justify-between max-w-[393px] m-auto p-[28px] px-[81px] bg-[#111111]"
+    class="flex items-center justify-between max-w-[393px] m-auto p-[28px] px-[81px] bg-[#111111] rounded-[20px]"
   >
     <div class="menu__item" @click="setActive(1)">
       <router-link to="tools">

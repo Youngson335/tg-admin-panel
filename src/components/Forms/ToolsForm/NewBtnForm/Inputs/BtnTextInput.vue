@@ -2,7 +2,7 @@
   <input
     placeholder="Button Text"
     type="text"
-    class="bg-graphite py-[1rem] text-center rounded-[20px] text-white50--"
+    class="bg-graphite py-[1rem] text-center rounded-[20px] text-white--"
     v-model="inputValue"
   />
 </template>

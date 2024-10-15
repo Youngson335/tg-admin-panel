@@ -67,7 +67,9 @@ const saveEndpoint = () => {
       lists: [],
     };
 
-    store.dispatch("saveApiEndpoint", newApi);
+    store.dispatch("saveApiEndpoint", newApi).then(() => {
+      store.dispatch("updateSelectedApi", newApi.id);
+    });
 
     linkEndpoint.value = "";
     nameEndpoint.value = "";
@@ -76,19 +78,13 @@ const saveEndpoint = () => {
     return false;
   }
 };
+
 onMounted(() => {
-  store.dispatch("loadApiFromLocalStorage");
+  store.dispatch("loadApiFromLocalStorage").then(() => {
+    const apiList = getAllApi.value;
+    if (apiList.length > 0) {
+      store.dispatch("updateSelectedApi", apiList[0].id);
+    }
+  });
 });
 </script>
-
-<style scoped lang="scss">
-form {
-  & button {
-    transition: all 0.4s ease;
-    &:active {
-      transition: all 0.4s ease;
-      scale: 1.1;
-    }
-  }
-}
-</style>
