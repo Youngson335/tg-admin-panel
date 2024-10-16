@@ -1,6 +1,6 @@
 <template>
   <div
-    class="uppercase p-[8px] rounded-[50%] border-red-- border-solid border-2 flex justify-center items-center w-[45px] h-[45px]"
+    class="uppercase p-[8px] rounded-[50%] border-red-- border-solid border-2 flex justify-center items-center min-w-[45px] min-h-[45px]"
   >
     {{ apiName }}
   </div>

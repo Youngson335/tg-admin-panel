@@ -27,13 +27,21 @@ export default createStore({
       }
     },
     deleteApiEndpoint(state, id) {
+      if (state.activeApi.id === id) {
+        state.activeApi = null;
+        state.selectedApi = null;
+      }
       state.api = state.api.filter((api) => api.id !== id);
     },
     createNewApi(state, flag) {
       state.newApi = flag;
     },
+    removeActiveApi(state) {
+      state.selectedApi = null;
+    },
     writeSelectApi(state, id) {
       state.selectedApi = id;
+      state.activeApi = state.api.find((api) => api.id === id); // Обновляем также activeApi
     },
     setApi(state, api) {
       state.api = api;
@@ -71,10 +79,16 @@ export default createStore({
   },
   actions: {
     saveApiEndpoint({ commit, state }, newApi) {
+      state.newApi = false;
+
       const apiWithId = { ...newApi, id: state.apiIdCounter + 1 };
       commit("addApiEndpoint", apiWithId);
       localStorage.setItem("apiEndpoints", JSON.stringify(state.api));
       localStorage.setItem("apiIdCounter", state.apiIdCounter);
+
+      // Устанавливаем добавленный API как активный
+      commit("writeSelectApi", apiWithId.id);
+      commit("writeActiveApi", apiWithId.id); // Устанавливаем активный API
     },
     updateApiEndpoint({ commit, state }, { id, updatedApi }) {
       commit("updateApiEndpoint", { id, updatedApi });
@@ -108,15 +122,6 @@ export default createStore({
         const parsedCounter = parseInt(idCounterFromLocalStorage, 10);
         commit("setApiIdCounter", parsedCounter);
       }
-    },
-
-    saveApiEndpoint({ commit, state }, newApi) {
-      const apiWithId = { ...newApi, id: state.apiIdCounter + 1 };
-      commit("addApiEndpoint", apiWithId);
-      localStorage.setItem("apiEndpoints", JSON.stringify(state.api));
-      localStorage.setItem("apiIdCounter", state.apiIdCounter);
-
-      commit("writeSelectApi", apiWithId.id);
     },
     saveMessageText({ commit }, messageText) {
       commit("setMessageText", messageText);

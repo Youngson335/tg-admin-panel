@@ -14,16 +14,17 @@
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
+import { defineEmits, inject } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
+
+let newApi = inject("newApi");
 
 const emit = defineEmits(["addApi"]);
 
 const addEndpoint = () => {
   emit("addApi");
-  store.dispatch("updateSelectedApi", null);
 };
 </script>
 

@@ -1,54 +1,47 @@
 <template>
-  <main class="home my-container overflow-scroll h-[75vh]">
-    <div v-if="newApi" class="home__form flex justify-center w-[100%]">
-      <ApiForm />
-    </div>
-
-    <div v-if="newApi !== true">
-      <div v-if="activeEndpointId !== null">
-        <EditApiForm :activeEndpoint="activeEndpoint" @closeForm="closeForm" />
+  <main
+    class="home my-container overflow-scroll h-full"
+    v-if="activeEndpoint !== undefined && activeEndpoint !== null"
+  >
+    <div>
+      <div class="flex justify-between items center mb-[20px]">
+        <MainTItle :text="'Basic metrics'" />
+        <RefreshBtn />
       </div>
-
-      <div v-if="activeEndpointId !== null">
-        <div class="flex justify-between items center mb-[20px]">
-          <MainTItle :text="'Basic metrics'" />
-          <RefreshBtn />
-        </div>
-        <UsersInfo :activeUserInfo="activeEndpoint.userInfo" />
-        <EndpointsBlock :activeEndpoint="activeEndpoint" />
-      </div>
+      <UsersInfo :activeUserInfo="activeEndpoint.userInfo" />
+      <EndpointsBlock :activeEndpoint="activeEndpoint" />
     </div>
   </main>
+  <NotConnected v-if="apiLength === 0 && selectedApi === null" />
 </template>
 
 <script setup>
-import ApiForm from "@/components/Forms/ApiForm/ApiForm.vue";
 import EndpointsBlock from "@/components/Endpoint/EndpointsBlock.vue";
 import UsersInfo from "@/components/UsersInfo/UsersInfo.vue";
 import RefreshBtn from "@/components/Buttons/RefreshBtn.vue";
-import EditApiForm from "@/components/Forms/ApiForm/EditApiForm.vue";
 import MainTItle from "@/components/Titles/MainTItle.vue";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch, onMounted, inject } from "vue";
 import { useStore } from "vuex";
+import { defineEmits } from "vue";
+import NotConnected from "../NotConnected/NotConnected.vue";
 
 const store = useStore();
-let getAPI = computed(() => store.getters["getApi"]);
+const emit = defineEmits(["setInfoEndpoint"]);
 
-const newApi = computed(() => store.getters["getNewApi"]);
+let getAPI = computed(() => store.getters["getApi"]);
 const selectedApi = computed(() => store.getters["getSelectedApi"]);
+
+const apiLength = computed(() => store.getters["getApi"].length);
 
 let activeEndpointId = ref(null);
 let activeEndpoint = ref(null);
-
 let activeApi = computed(() => store.getters["getActiveApi"]);
 
 const selectApi = (id) => {
   activeEndpoint.value = getAPI.value.find((api) => api.id === id);
   activeEndpointId.value = id;
-};
 
-const closeForm = () => {
-  activeEndpointId.value = null;
+  emit("setInfoEndpoint", activeEndpointId.value);
 };
 
 watch(selectedApi, (newValue) => {

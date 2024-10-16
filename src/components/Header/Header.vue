@@ -25,23 +25,22 @@ import { useStore } from "vuex";
 const store = useStore();
 const emit = defineEmits(["addApi", "selectApi"]);
 
-const activeApiId = computed(() => store.getters.getSelectedApi);
+const activeApiId = computed(() => store.getters["getSelectedApi"]);
 
 const createEndpoint = () => {
   emit("addApi");
+  const newApiId = store.state.apiIdCounter + 1;
+  store.commit("writeSelectApi", newApiId);
 };
 
 const selectEndpoint = (id) => {
   emit("selectApi", id);
   store.dispatch("addNewApi", false);
+  store.commit("writeSelectApi", id);
   store.commit("writeActiveApi", id);
 };
 
-onMounted(() => {
-  store.dispatch("loadApiFromLocalStorage");
-});
-
-const getApiNames = computed(() => store.getters.getApi);
+const getApiNames = computed(() => store.getters["getApi"]);
 </script>
 
 <style lang="scss">
