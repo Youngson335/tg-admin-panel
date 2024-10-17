@@ -6,7 +6,7 @@
       <ApiForm />
     </div>
 
-    <div v-if="activeApi">
+    <div v-if="activeApi && newApi === false">
       <EditApiForm :activeEndpoint="activeApi" />
     </div>
 
@@ -32,14 +32,11 @@ let getApi = computed(() => store.getters["getApi"]);
 
 let activeApi = computed(() => store.getters["getActiveApi"]);
 
-const apiLength = getApi.value.length;
-
 const newApi = computed(() => store.getters["getNewApi"]);
 provide("newApi", newApi);
 
 const createEndpoint = () => {
   if (newApi.value === false) {
-    // store.commit("removeActiveApi");
     store.dispatch("addNewApi", true);
   } else {
     store.dispatch("addNewApi", false);

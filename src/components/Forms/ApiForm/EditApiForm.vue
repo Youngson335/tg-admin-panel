@@ -8,11 +8,11 @@
 
     <div class="flex items-center space-x-2 mb-[8px]">
       <LabelPost
-        v-if="typeRequest === 'post'"
+        v-if="typeRequest == 'post'"
         @click="selectTypeRequest('get')"
       />
       <LabelGet
-        v-if="typeRequest === 'get'"
+        v-if="typeRequest == 'get'"
         @click="selectTypeRequest('post')"
       />
       <ApiLinkInput v-model="activeEndpoint.link" id="endpointLink" />
@@ -25,10 +25,12 @@
       <DeleteBtn @click="deleteEndpoint" />
     </div>
   </form>
+
+  <Notification :notification="notificationState" v-if="notificationVisible" />
 </template>
 
 <script setup>
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, computed } from "vue";
 import { useStore } from "vuex";
 import DeleteBtn from "./Buttons/DeleteBtn.vue";
 import UpdateBtn from "./Buttons/UpdateBtn.vue";
@@ -37,6 +39,11 @@ import LabelGet from "./Labels/LabelGet.vue";
 import ApiLinkInput from "./Inputs/ApiLinkInput.vue";
 import ApiNameInput from "./Inputs/ApiNameInput.vue";
 import ApiKeyInput from "./Inputs/ApiKeyInput.vue";
+import Notification from "@/components/Notification/Notification.vue";
+import { useNotification } from "@/composables/Notification";
+
+const { notificationState, notificationVisible, showNotification } =
+  useNotification();
 
 const store = useStore();
 const emit = defineEmits(["closeForm"]);
@@ -48,11 +55,16 @@ const props = defineProps({
   },
 });
 
-const typeRequest = ref(props.activeEndpoint.request);
+const typeRequest = computed({
+  get: () => props.activeEndpoint.request,
+  set: (value) => {
+    props.activeEndpoint.request = value;
+  },
+});
 
 const selectTypeRequest = (type) => {
   typeRequest.value = type;
-  console.log(typeRequest.value);
+  console.log("Selected typeRequest:", typeRequest.value);
 };
 
 const updateEndpoint = () => {
@@ -74,6 +86,7 @@ const updateEndpoint = () => {
   } else {
     return false;
   }
+  showNotification("success", "update info api");
 };
 
 const deleteEndpoint = () => {

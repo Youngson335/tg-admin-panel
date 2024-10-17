@@ -21,8 +21,10 @@ import Notification from "@/components/Notification/Notification.vue";
 import { useNotification } from "@/composables/Notification";
 import { ref, computed } from "vue";
 import { useStore } from "vuex";
-import axios from "axios";
-import { postToolsData } from "@/composables/requests/postToolsData";
+import {
+  postToolsData,
+  getToolsData,
+} from "@/composables/requests/requestToolsData";
 
 const store = useStore();
 
@@ -41,26 +43,33 @@ async function handleSend() {
     showNotification("error", "Select api!", "API not selected");
   } else {
     if (store.state.apiEndpoint.messageText !== "") {
+      const sendRequest = async () => {
+        try {
+          let response;
+          if (activeApi.value.request === "post") {
+            response = await postToolsData(activeApi.value, apiEndpoint.value);
+          } else if (activeApi.value.request === "get") {
+            response = await getToolsData(activeApi.value);
+          }
+
+          showNotification(
+            "success",
+            "The newsletter has been successfully launched!",
+            response
+          );
+        } catch (error) {
+          showNotification(
+            "error",
+            "Error when starting the mailing list:",
+            error.message
+          );
+        }
+      };
+
       if (window.Telegram && Telegram.WebApp.version >= 6.2) {
         Telegram.WebApp.showConfirm("Send data?", async (result) => {
           if (result) {
-            try {
-              const response = await postToolsData(
-                activeApi.value,
-                apiEndpoint.value
-              );
-              showNotification(
-                "success",
-                "The newsletter has been successfully launched!",
-                response
-              );
-            } catch (error) {
-              showNotification(
-                "error",
-                "Error when starting the mailing list:",
-                error.message
-              );
-            }
+            await sendRequest();
           } else {
             showNotification(
               "error",
@@ -71,23 +80,7 @@ async function handleSend() {
         });
       } else {
         if (confirm("Send data?")) {
-          try {
-            const response = await postToolsData(
-              activeApi.value,
-              apiEndpoint.value
-            );
-            showNotification(
-              "success",
-              "The newsletter has been successfully launched!",
-              response
-            );
-          } catch (error) {
-            showNotification(
-              "error",
-              "Error when starting the mailing list:",
-              error.message
-            );
-          }
+          await sendRequest();
         } else {
           showNotification(
             "error",

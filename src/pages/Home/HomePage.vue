@@ -3,7 +3,7 @@
     class="home my-container overflow-scroll h-full"
     v-if="activeEndpoint !== undefined && activeEndpoint !== null"
   >
-    <div>
+    <div v-if="activeApi !== null && newApi === false">
       <div class="flex justify-between items center mb-[20px]">
         <MainTItle :text="'Basic metrics'" />
         <RefreshBtn />
@@ -12,7 +12,7 @@
       <EndpointsBlock :activeEndpoint="activeEndpoint" />
     </div>
   </main>
-  <NotConnected v-if="apiLength === 0 && selectedApi === null" />
+  <NotConnected v-if="activeApi === null && selectedApi === null" />
 </template>
 
 <script setup>
@@ -20,22 +20,21 @@ import EndpointsBlock from "@/components/Endpoint/EndpointsBlock.vue";
 import UsersInfo from "@/components/UsersInfo/UsersInfo.vue";
 import RefreshBtn from "@/components/Buttons/RefreshBtn.vue";
 import MainTItle from "@/components/Titles/MainTItle.vue";
-import { ref, computed, watch, onMounted, inject } from "vue";
+import { ref, computed, watch, onMounted, inject, watchEffect } from "vue";
 import { useStore } from "vuex";
-import { defineEmits } from "vue";
 import NotConnected from "../NotConnected/NotConnected.vue";
 
 const store = useStore();
 const emit = defineEmits(["setInfoEndpoint"]);
 
-let getAPI = computed(() => store.getters["getApi"]);
-const selectedApi = computed(() => store.getters["getSelectedApi"]);
+const newApi = inject("newApi");
 
-const apiLength = computed(() => store.getters["getApi"].length);
+const getAPI = computed(() => store.getters["getApi"]);
+const selectedApi = computed(() => store.getters["getSelectedApi"]);
+const activeApi = computed(() => store.getters["getActiveApi"]);
 
 let activeEndpointId = ref(null);
 let activeEndpoint = ref(null);
-let activeApi = computed(() => store.getters["getActiveApi"]);
 
 const selectApi = (id) => {
   activeEndpoint.value = getAPI.value.find((api) => api.id === id);
@@ -47,11 +46,18 @@ const selectApi = (id) => {
 watch(selectedApi, (newValue) => {
   if (newValue) {
     selectApi(newValue);
-  }
-  if (newValue === null) {
+  } else {
     activeEndpointId.value = null;
+    activeEndpoint.value = null;
   }
 });
+
+watchEffect(() => {
+  if (activeApi.value) {
+    selectApi(activeApi.value.id);
+  }
+});
+
 onMounted(() => {
   if (activeApi.value) {
     selectApi(activeApi.value.id);

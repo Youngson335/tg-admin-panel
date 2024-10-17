@@ -11,6 +11,8 @@ export default createStore({
   },
   mutations: {
     addApiEndpoint(state, newApi) {
+      console.log(newApi);
+      state.selectedApi = newApi.id;
       state.api.push(newApi);
       state.apiIdCounter++;
     },
@@ -34,14 +36,25 @@ export default createStore({
       state.api = state.api.filter((api) => api.id !== id);
     },
     createNewApi(state, flag) {
+      if (flag === true) {
+        state.selectedApi = null;
+      } else {
+        return;
+      }
       state.newApi = flag;
     },
     removeActiveApi(state) {
       state.selectedApi = null;
     },
     writeSelectApi(state, id) {
+      if (state.activeApi === undefined || state.activeApi === null) {
+        state.selectedApi = id;
+        state.activeApi = state.api.find((api) => api.id === id);
+      }
+    },
+    selectedApi(state, id) {
       state.selectedApi = id;
-      state.activeApi = state.api.find((api) => api.id === id); // Обновляем также activeApi
+      state.activeApi = state.api.find((api) => api.id === id);
     },
     setApi(state, api) {
       state.api = api;

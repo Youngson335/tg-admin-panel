@@ -19,11 +19,13 @@
 <script setup>
 import AddApiBtn from "../Buttons/AddApiBtn.vue";
 import EndpointName from "../Endpoint/EndpointName.vue";
-import { computed, defineEmits, onMounted } from "vue";
+import { computed, defineEmits, inject, onMounted } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
 const emit = defineEmits(["addApi", "selectApi"]);
+
+const newApi = inject("newApi");
 
 const activeApiId = computed(() => store.getters["getSelectedApi"]);
 
@@ -36,7 +38,7 @@ const createEndpoint = () => {
 const selectEndpoint = (id) => {
   emit("selectApi", id);
   store.dispatch("addNewApi", false);
-  store.commit("writeSelectApi", id);
+  store.commit("selectedApi", id);
   store.commit("writeActiveApi", id);
 };
 
