@@ -14,16 +14,23 @@
 </template>
 
 <script setup>
-import { defineEmits } from "vue";
+import { computed, defineEmits, inject, ref } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
 
+let newApi = ref(computed(() => store.getters["getNewApi"]));
+
 const emit = defineEmits(["addApi"]);
 
 const addEndpoint = () => {
-  emit("addApi");
-  store.dispatch("updateSelectedApi", null);
+  if (newApi.value === true) {
+    store.commit("createNewApi", false);
+  } else {
+    store.commit("createNewApi", true);
+  }
+  console.log(newApi.value);
+  // emit("addApi");
 };
 </script>
 

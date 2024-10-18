@@ -24,22 +24,33 @@ import NewBtnsForm from "./NewBtnsForm.vue";
 
 const store = useStore();
 const forms = ref([]);
+const btns = ref([]);
 
 const addNewForm = () => {
   forms.value.push({
-    id: Date.now(),
+    id: Math.random(Date.now()).toString().slice(0, 6),
     visible: true,
+    button: ref(null),
   });
 };
 
 const removeForm = (id) => {
+  // delete from ui
   const index = forms.value.findIndex((form) => form.id === id);
   if (index !== -1) {
     forms.value.splice(index, 1);
   }
+
+  // delete from vuex
+  store.commit("removeButtonFromApiEndpoint", id);
 };
 
 const saveForm = (formData) => {
-  store.commit("addButtonToApiEndpoint", formData);
+  const buttonWithId = { ...formData };
+
+  btns.value.push(buttonWithId);
+  forms.value.button = buttonWithId;
+
+  store.commit("addButtonToApiEndpoint", buttonWithId);
 };
 </script>

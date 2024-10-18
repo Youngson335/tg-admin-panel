@@ -1,14 +1,9 @@
 <template>
-  <main class="home my-container overflow-scroll h-[75vh]">
-    <div v-if="newApi" class="home__form flex justify-center w-[100%]">
-      <ApiForm />
-    </div>
-
-    <div v-if="activeEndpointId !== null">
-      <EditApiForm :activeEndpoint="activeEndpoint" @closeForm="closeForm" />
-    </div>
-
-    <div v-if="activeEndpointId !== null">
+  <main
+    class="home my-container overflow-scroll h-full"
+    v-if="activeEndpoint !== undefined && activeEndpoint !== null"
+  >
+    <div v-if="activeApi !== null && newApi === false">
       <div class="flex justify-between items center mb-[20px]">
         <MainTItle :text="'Basic metrics'" />
         <RefreshBtn />
@@ -17,23 +12,26 @@
       <EndpointsBlock :activeEndpoint="activeEndpoint" />
     </div>
   </main>
+  <NotConnected v-if="activeApi === null && selectedApi === null" />
 </template>
 
 <script setup>
-import ApiForm from "@/components/Forms/ApiForm/ApiForm.vue";
 import EndpointsBlock from "@/components/Endpoint/EndpointsBlock.vue";
 import UsersInfo from "@/components/UsersInfo/UsersInfo.vue";
 import RefreshBtn from "@/components/Buttons/RefreshBtn.vue";
-import EditApiForm from "@/components/Forms/ApiForm/EditApiForm.vue";
 import MainTItle from "@/components/Titles/MainTItle.vue";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted, inject, watchEffect } from "vue";
 import { useStore } from "vuex";
+import NotConnected from "../NotConnected/NotConnected.vue";
 
 const store = useStore();
-let getAPI = computed(() => store.getters["getApi"]);
+const emit = defineEmits(["setInfoEndpoint"]);
 
-const newApi = computed(() => store.getters["getNewApi"]);
+const newApi = inject("newApi");
+
+const getAPI = computed(() => store.getters["getApi"]);
 const selectedApi = computed(() => store.getters["getSelectedApi"]);
+const activeApi = computed(() => store.getters["getActiveApi"]);
 
 let activeEndpointId = ref(null);
 let activeEndpoint = ref(null);
@@ -41,18 +39,28 @@ let activeEndpoint = ref(null);
 const selectApi = (id) => {
   activeEndpoint.value = getAPI.value.find((api) => api.id === id);
   activeEndpointId.value = id;
-};
 
-const closeForm = () => {
-  activeEndpointId.value = null;
+  emit("setInfoEndpoint", activeEndpointId.value);
 };
 
 watch(selectedApi, (newValue) => {
   if (newValue) {
     selectApi(newValue);
-  }
-  if (newValue === null) {
+  } else {
     activeEndpointId.value = null;
+    activeEndpoint.value = null;
+  }
+});
+
+watchEffect(() => {
+  if (activeApi.value) {
+    selectApi(activeApi.value.id);
+  }
+});
+
+onMounted(() => {
+  if (activeApi.value) {
+    selectApi(activeApi.value.id);
   }
 });
 </script>

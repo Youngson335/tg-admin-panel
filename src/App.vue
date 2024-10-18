@@ -1,30 +1,69 @@
 <template>
-  <Header @addApi="createEndpoint" @selectApi="selectApi" />
+  <div class="my-container overflow-scroll h-full">
+    <Header @addApi="createEndpoint" @selectApi="selectApi" />
 
-  <router-view />
+    <div v-if="newApi" class="home__form flex justify-center w-[100%]">
+      <ApiForm />
+    </div>
 
-  <div class="menu">
-    <Menu />
+    <div v-if="activeApi && newApi === false">
+      <EditApiForm :activeEndpoint="activeApi" />
+    </div>
+
+    <router-view @setInfoEndpoint="setInfoEndpoint" />
+
+    <div class="menu">
+      <Menu />
+    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+import { onMounted, provide, computed, ref } from "vue";
 import Menu from "./components/Menu/Menu.vue";
 import Header from "./components/Header/Header.vue";
+import ApiForm from "./components/Forms/ApiForm/ApiForm.vue";
+import EditApiForm from "./components/Forms/ApiForm/EditApiForm.vue";
 import { useStore } from "vuex";
 
 const store = useStore();
 
+let getApi = computed(() => store.getters["getApi"]);
+
+let activeApi = computed(() => store.getters["getActiveApi"]);
+
+const newApi = computed(() => store.getters["getNewApi"]);
+provide("newApi", newApi);
+
 const createEndpoint = () => {
-  store.dispatch("updateSelectedApi", null);
-  store.dispatch("addNewApi", true);
+  if (newApi.value === false) {
+    store.dispatch("addNewApi", true);
+  } else {
+    store.dispatch("addNewApi", false);
+  }
 };
 
 const selectApi = (id) => {
   store.dispatch("updateSelectedApi", id);
-  console.log(id);
 };
+
+let activeEndpointId = ref(null);
+
+const setInfoEndpoint = (item) => {
+  activeEndpointId.value = item;
+};
+
+onMounted(() => {
+  store.dispatch("loadApiFromLocalStorage").then(() => {
+    const apiList = getApi.value;
+    if (apiList.length > 0) {
+      if (newApi.value === true) {
+        store.dispatch("updateSelectedApi", null);
+      }
+      store.dispatch("updateSelectedApi", apiList[0].id);
+    }
+  });
+});
 
 //применение стилей к браузеру
 const body = document.getElementsByTagName("body")[0];
